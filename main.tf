@@ -16,15 +16,25 @@ provider "aws" {
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-}
-
-resource "aws_subnet" "main-subnet" {
-  vpc_id = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  tags = {
+    Name = "MC_VPC"
+  }
 }
 
 resource "aws_internet_gateway" "main-gw" {
   vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "MC_IGW"
+  }
+}
+
+resource "aws_subnet" "main-subnet" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "MC_SUBNET"
+  }
 }
 
 resource "aws_security_group" "minecraft-sg" {
@@ -40,12 +50,49 @@ resource "aws_security_group" "minecraft-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 25565
     to_port     = 25565
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  egress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "MC_SG"
+  }
+}
+
+resource "aws_route_table" "main-rtb" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main-gw.id
+  }
+
+  tags = {
+    Name = "MC_RTB"
+  }
+}
+
+resource "aws_route_table_association" "subnet_association" {
+  subnet_id      = aws_subnet.main-subnet.id
+  route_table_id = aws_route_table.main-rtb.id
 }
 
 resource "aws_instance" "app_server" {
@@ -54,6 +101,7 @@ resource "aws_instance" "app_server" {
   vpc_security_group_ids      = [aws_security_group.minecraft-sg.id]
   subnet_id                   = aws_subnet.main-subnet.id
   associate_public_ip_address = true
+  key_name                    = "RDP"
 
   tags = {
     Name = "MinecraftServer"
