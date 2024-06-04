@@ -18,8 +18,13 @@ In other words, create a script that essentially provisions and configures a Min
 ### How did I do this?
 At present, I'm still working on implementation, but when finished, this would go here.
 
+### Prerequisites
+- This tutorial uses AWS, so you need an AWS account with billing set up.
+- AWS CLI installed.
+- Terraform installed.
+
 ### How To Use (Steps to Reproduce)
-1. Enroll in CS312
-2. Cry
+1. Enroll in CS312.
+2. Cry.
 3. ???
-4. Profit
+4. Profit!
