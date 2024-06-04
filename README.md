@@ -16,7 +16,9 @@ Glad you asked. Listed below are a copy of the broad guidelines:
 In other words, create a script that essentially provisions and configures a Minecraft server automatically.
 
 ### How did I do this?
-At present, I'm still working on implementation, but when finished, this would go here.
+Essentially, this repository contains two scripts: one Terraform script that deploys the server initially with firewall settings. Once Terraform deploys, the second script is ran automatically on the target that is deployed.
+
+This second script handles installation and setup of the Minecraft server.
 
 ### Prerequisites
 - This tutorial uses AWS, so you need an AWS account with billing set up.
