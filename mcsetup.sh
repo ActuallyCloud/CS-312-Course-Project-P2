@@ -27,7 +27,7 @@ User=ubuntu
 WorkingDirectory=/home/ubuntu/minecraft
 Restart=on-failure
 RestartSec=10s
-ExecStart=java -Xmx2G -Xms2G -jar paper.jar
+ExecStart=java -Xmx1536M -Xms1536M -jar paper.jar
 
 [Install]
 WantedBy=multi-user.target" > mcserver.service
