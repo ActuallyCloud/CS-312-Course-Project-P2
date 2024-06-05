@@ -111,8 +111,8 @@ resource "aws_route_table_association" "subnet_association" {
 
 # Creating the actual EC2 server! You'll notice by default it associates with our created subnet and security groups.
 resource "aws_instance" "main-mc-server" {
-  ami                         = "ami-0c29a2c5cf69b5a9c" # Ubuntu on ARM
-  instance_type               = "t4g.small"             # 2 vCPUs, 2GB RAM
+  ami                         = "ami-0cf2b4e024cdb6960" # Ubuntu on x86
+  instance_type               = "t3.small"             # 2 vCPUs, 2GB RAM
   vpc_security_group_ids      = [aws_security_group.minecraft-sg.id]
   subnet_id                   = aws_subnet.main-subnet.id
   associate_public_ip_address = true

@@ -36,8 +36,7 @@ WantedBy=multi-user.target" > mcserver.service
 
 echo "Starting the Minecraft server..."
 systemctl daemon-reload
-systemctl start mcserver
 systemctl enable mcserver
 
-echo "Current server status..."
-systemctl status mcserver
+echo "Rebooting server..."
+sudo reboot
