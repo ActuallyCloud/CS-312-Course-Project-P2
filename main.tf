@@ -7,13 +7,16 @@ terraform {
   }
 }
 
+# Initialize the AWS provider using keys provided in the variables.tf file.
 provider "aws" {
-  region     = "us-west-2"
+  region = "us-west-2"
+
   access_key = var.accesskey
   secret_key = var.secretkey
   token      = var.accesstoken
 }
 
+# This creates the main virtual private network.
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -21,6 +24,7 @@ resource "aws_vpc" "main" {
   }
 }
 
+# This creates the actual connection to the internet through the VPC.
 resource "aws_internet_gateway" "main-gw" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -28,6 +32,7 @@ resource "aws_internet_gateway" "main-gw" {
   }
 }
 
+# This creates the main subnet. Note that map_public_ip_on_launch is enabled.
 resource "aws_subnet" "main-subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -37,19 +42,31 @@ resource "aws_subnet" "main-subnet" {
   }
 }
 
+# This creates a new security group which contains some additional rules listed below.
 resource "aws_security_group" "minecraft-sg" {
   name        = "minecraft-sg"
   description = "Allows Minecraft traffic"
   vpc_id      = aws_vpc.main.id
 
+  # Allows Minecraft to access the server.
   ingress {
-    description = "Minecraft server traffic"
+    description = "Minecraft"
     from_port   = 25565
     to_port     = 25565
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allows web traffic to access the server.
+  ingress {
+    description = "web traffic"
+    from_port   = 80
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow SSH (mostly for development testing)
   ingress {
     description = "SSH"
     from_port   = 22
@@ -58,17 +75,12 @@ resource "aws_security_group" "minecraft-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow all traffic going outbound from the instance.
   egress {
-    from_port   = 25565
-    to_port     = 25565
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    description = "Allow all egress traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "all"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -77,6 +89,7 @@ resource "aws_security_group" "minecraft-sg" {
   }
 }
 
+# Route table routes all outbound internet traffic through the gateway.
 resource "aws_route_table" "main-rtb" {
   vpc_id = aws_vpc.main.id
 
@@ -90,12 +103,14 @@ resource "aws_route_table" "main-rtb" {
   }
 }
 
+# Associate the route table with the created subnet.
 resource "aws_route_table_association" "subnet_association" {
   subnet_id      = aws_subnet.main-subnet.id
   route_table_id = aws_route_table.main-rtb.id
 }
 
-resource "aws_instance" "app_server" {
+# Creating the actual EC2 server! You'll notice by default it associates with our created subnet and security groups.
+resource "aws_instance" "main-mc-server" {
   ami                         = "ami-0c29a2c5cf69b5a9c" # Ubuntu on ARM
   instance_type               = "t4g.small"             # 2 vCPUs, 2GB RAM
   vpc_security_group_ids      = [aws_security_group.minecraft-sg.id]
