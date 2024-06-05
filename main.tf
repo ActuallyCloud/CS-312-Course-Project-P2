@@ -124,10 +124,10 @@ resource "aws_instance" "main-mc-server" {
 
   # After server is created, connect to it using SSH.
   connection {
-    type = "ssh"
-    user = "ubuntu"
+    type        = "ssh"
+    user        = "ubuntu"
     private_key = file("MC.pem")
-    host = self.public_ip
+    host        = self.public_ip
   }
 
   # Run these commands on the remote machine in this order.
@@ -137,6 +137,27 @@ resource "aws_instance" "main-mc-server" {
     inline = [
       "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup.sh -o mcsetup.sh",
       "sudo bash ./mcsetup.sh"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "wget https://api.papermc.io/v2/projects/paper/versions/1.18.2/builds/388/downloads/paper-1.18.2-388.jar",
+      "mv paper-1.18.2-388.jar paper.jar",
+      "echo 'eula=true' > eula.txt"
+    ]
+    connection {
+      type     = "ssh"
+      user     = "minecraft"
+      password = "mcserver"
+      host     = self.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup2.sh -o mcsetup2.sh",
+      "sudo bash ./mcsetup2.sh"
     ]
   }
 }
