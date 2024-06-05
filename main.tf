@@ -116,9 +116,27 @@ resource "aws_instance" "main-mc-server" {
   vpc_security_group_ids      = [aws_security_group.minecraft-sg.id]
   subnet_id                   = aws_subnet.main-subnet.id
   associate_public_ip_address = true
-  key_name                    = "RDP"
+  key_name                    = "MC"
 
   tags = {
     Name = "MinecraftServer"
+  }
+
+  # After server is created, connect to it using SSH.
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    private_key = file("MC.pem")
+    host = self.public_ip
+  }
+
+  # Run these commands on the remote machine in this order.
+  # The first command downloads the mcsetup.sh script from GitHub.
+  # The second command runs the script with elevated privileges.
+  provisioner "remote-exec" {
+    inline = [
+      "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup.sh -o mcsetup.sh",
+      "sudo bash ./mcsetup.sh"
+    ]
   }
 }

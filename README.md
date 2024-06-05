@@ -24,6 +24,7 @@ This second script handles installation and setup of the Minecraft server.
 - This tutorial uses AWS, so you need an AWS account with billing set up.
 - AWS CLI installed.
 - Terraform installed.
+- An AWS key generated and the private key file downloaded. In this case, the key is named "MC.pem"
 
 ### How To Use (Steps to Reproduce)
 1. Enroll in CS312.
