@@ -136,26 +136,12 @@ resource "aws_instance" "main-mc-server" {
   provisioner "remote-exec" {
     inline = [
       "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup.sh -o mcsetup.sh",
-      "sudo bash ./mcsetup.sh"
-    ]
-  }
-
-  provisioner "remote-exec" {
-    inline = [
+      "sudo bash ./mcsetup.sh",
+      "sudo su - minecraft",
       "wget https://api.papermc.io/v2/projects/paper/versions/1.18.2/builds/388/downloads/paper-1.18.2-388.jar",
       "mv paper-1.18.2-388.jar paper.jar",
-      "echo 'eula=true' > eula.txt"
-    ]
-    connection {
-      type     = "ssh"
-      user     = "minecraft"
-      password = "mcserver"
-      host     = self.public_ip
-    }
-  }
-
-  provisioner "remote-exec" {
-    inline = [
+      "echo 'eula=true' > eula.txt",
+      "exit",
       "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup2.sh -o mcsetup2.sh",
       "sudo bash ./mcsetup2.sh"
     ]
