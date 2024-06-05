@@ -27,7 +27,7 @@ This second script handles installation and setup of the Minecraft server, as we
 - An AWS key generated and the private key file downloaded. In this case, the key is named "MC.pem"
 
 ### How To Use (Steps to Reproduce)
-1. Download an AWS key from the Console, or use one you've already generated.
+1. Download an AWS key from the Console, or use one you've already generated. Fill the key name into the instance details on line 119, and fill in the correct file that contains the key on line 129.
 2. Get an access token, secret key, and access key, and place them into a variables.tf file that looks like this:
 ```
 variable "accesskey" {
