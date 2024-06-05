@@ -10,5 +10,32 @@ apt upgrade -y > /dev/null
 echo "Installing Java... (may take a while)"
 apt install openjdk-17-jdk -y > /dev/null
 
-echo "Creating a new user for the Minecraft server..."
-useradd -r -m -U -d /Minecraft -s /bin/bash minecraft
+echo "Setting up directory for MC server..."
+mkdir minecraft && cd minecraft
+wget https://api.papermc.io/v2/projects/paper/versions/1.18.2/builds/388/downloads/paper-1.18.2-388.jar
+mv paper-1.18.2-388.jar paper.jar
+echo 'eula=true' > eula.txt
+
+echo "Creating a systemd service for the Minecraft server..."
+cd ../..
+cd /etc/systemd/system
+echo "[Unit]
+Description=Minecraft Server
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/minecraft
+Restart=on-failure
+RestartSec=10s
+ExecStart=java -Xmx2G -Xms2G -jar paper.jar
+
+[Install]
+WantedBy=multi-user.target" > mcserver.service
+
+echo "Starting the Minecraft server..."
+systemctl daemon-reload
+systemctl start mcserver
+systemctl enable mcserver
+
+echo "Current server status..."
+systemctl status mcserver
