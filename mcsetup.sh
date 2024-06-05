@@ -11,7 +11,9 @@ echo "Installing Java... (may take a while)"
 apt install openjdk-17-jdk -y > /dev/null
 
 echo "Setting up directory for MC server..."
-mkdir minecraft && cd minecraft
+mkdir minecraft
+chmod -R 777 minecraft
+cd minecraft
 wget https://api.papermc.io/v2/projects/paper/versions/1.18.2/builds/388/downloads/paper-1.18.2-388.jar
 mv paper-1.18.2-388.jar paper.jar
 echo 'eula=true' > eula.txt
