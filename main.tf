@@ -112,7 +112,7 @@ resource "aws_route_table_association" "subnet_association" {
 # Creating the actual EC2 server! You'll notice by default it associates with our created subnet and security groups.
 resource "aws_instance" "main-mc-server" {
   ami                         = "ami-0cf2b4e024cdb6960" # Ubuntu on x86
-  instance_type               = "t3.small"             # 2 vCPUs, 2GB RAM
+  instance_type               = "t3.small"              # 2 vCPUs, 2GB RAM
   vpc_security_group_ids      = [aws_security_group.minecraft-sg.id]
   subnet_id                   = aws_subnet.main-subnet.id
   associate_public_ip_address = true
@@ -136,12 +136,13 @@ resource "aws_instance" "main-mc-server" {
   provisioner "remote-exec" {
     inline = [
       "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup.sh -o mcsetup.sh",
-      "sudo bash ./mcsetup.sh"
+      "sudo bash ./mcsetup.sh",
+      "sudo /usr/sbin/shutdown -r 1"
     ]
   }
 }
 
-output "instance_public_ip" {
+output "Minecraft IP" {
   description = "The public IP of the Minecraft server!"
-  value = aws_instance.main-mc-server.public_ip
+  value       = aws_instance.main-mc-server.public_ip
 }
