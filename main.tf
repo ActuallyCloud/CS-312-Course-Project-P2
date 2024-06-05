@@ -142,8 +142,8 @@ resource "aws_instance" "main-mc-server" {
       "mv paper-1.18.2-388.jar paper.jar",
       "echo 'eula=true' > eula.txt",
       "exit",
-      "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup2.sh -o mcsetup2.sh",
-      "sudo bash ./mcsetup2.sh"
+      "curl -sSL https://raw.githubusercontent.com/ActuallyCloud/CS-312-Course-Project-P2/main/mcsetup2.sh -o mcsetup.sh",
+      "sudo bash ./mcsetup.sh"
     ]
   }
 }
