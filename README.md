@@ -16,9 +16,9 @@ Glad you asked. Listed below are a copy of the broad guidelines:
 In other words, create a script that essentially provisions and configures a Minecraft server automatically.
 
 ### How did I do this?
-Essentially, this repository contains two scripts: one Terraform script that deploys the server initially with firewall settings. Once Terraform deploys, the second script is ran automatically on the target that is deployed.
+Essentially, this repository contains two scripts: one Terraform script that deploys the server initially with the correct firewall settings. Once Terraform deploys, the second script is ran automatically on the target that is deployed.
 
-This second script handles installation and setup of the Minecraft server.
+This second script handles installation and setup of the Minecraft server, as well as creation of the automated service that restarts the server on boot.
 
 ### Prerequisites
 - This tutorial uses AWS, so you need an AWS account with billing set up.
@@ -27,7 +27,27 @@ This second script handles installation and setup of the Minecraft server.
 - An AWS key generated and the private key file downloaded. In this case, the key is named "MC.pem"
 
 ### How To Use (Steps to Reproduce)
-1. Enroll in CS312.
-2. Cry.
-3. ???
-4. Profit!
+1. Download an AWS key from the Console, or use one you've already generated.
+2. Get an access token, secret key, and access key, and place them into a variables.tf file that looks like this:
+```
+variable "accesskey" {
+  description = "Amazon Parameters"
+  type        = string
+  default     = "<access key here>"
+}
+
+variable "secretkey" {
+  description = "Secret Key"
+  type        = string
+  default     = "<secret key here>"
+}
+
+variable "accesstoken" {
+  description = "Token"
+  type        = string
+  default     = "<access token here>"
+}
+```
+3. Choose your desired instance type (by default, t3.small is used, which has 2 vCPUs and 2GB of RAM) and fill it in under the instance details on line 115 of main.tf.
+4. Run the script using ```terraform apply``` and confirm by entering yes when prompted.
+5. Wait for the script to finish - it can take up to 5 minutes. Allow additional time after the script finishes for the server to reboot.
