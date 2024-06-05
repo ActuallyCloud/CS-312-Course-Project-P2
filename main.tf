@@ -140,3 +140,8 @@ resource "aws_instance" "main-mc-server" {
     ]
   }
 }
+
+output "instance_public_ip" {
+  description = "The public IP of the Minecraft server!"
+  value = aws_instance.main-mc-server.public_ip
+}
